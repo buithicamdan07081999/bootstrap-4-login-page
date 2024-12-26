@@ -28,7 +28,7 @@
 						<div class="card fat">
 							<div class="card-body">
 								<h4 class="card-title">Login</h4>
-								<form method="POST" class="my-login-validation" novalidate="">
+								<form method="post" class="my-login-validation" novalidate="" action="handle.php">
 									<div class="form-group">
 										<label for="email">E-Mail Address</label>
 										<input id="email" type="email" class="form-control" name="username" id="username" value="" required autofocus>
@@ -85,5 +85,12 @@
 	include_once __DIR__ . '/../layouts/partials/footer.php'
 	?>
 </body>
+<?php
+if (1 == 1) {
+	echo '<script> location.href="handle.php"</script>';
+} else {
+	echo '<script>alert("Dữ liệu không được rỗng!");</script>';
+}
+?>
 
 </html>
