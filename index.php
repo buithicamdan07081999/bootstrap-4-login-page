@@ -28,43 +28,54 @@
 						<div class="card fat">
 							<div class="card-body">
 								<h4 class="card-title">Login</h4>
-								<form method="post" class="my-login-validation" novalidate="" action="handle.php">
-									<div class="form-group">
-										<label for="email">E-Mail Address</label>
-										<input id="email" type="email" class="form-control" name="username" id="username" value="" required autofocus>
-										<div class="invalid-feedback">
-											Email is invalid
-										</div>
-									</div>
 
-									<div class="form-group">
-										<label for="password">Password
-											<a href="forgot.html" class="float-right">
-												Forgot Password?
-											</a>
-										</label>
-										<input id="password" type="password" class="form-control" name="password" required data-eye>
-										<div class="invalid-feedback">
-											Password is required
-										</div>
-									</div>
+								<?php if (
+									// (isset($_SESSION['logged']) && $_SESSION['logged'] == true) 
+									 // ||
+									(isset($_COOKIE['logged']) && $_COOKIE['logged'] == true)
+								): ?>
 
-									<div class="form-group">
-										<div class="custom-checkbox custom-control">
-											<input type="checkbox" name="remember" id="remember" class="custom-control-input">
-											<label for="remember" class="custom-control-label">Remember Me</label>
+									<h2>Xin chào </h2><?= $_SESSION['username'] ?> đã quay trở lại trang web.
+									<a href="/salomon.com/index.php">Click vào đây để quay lại!</a></br>
+								<?php else: ?>
+									<form method="post" class="my-login-validation" novalidate="">
+										<div class="form-group">
+											<label for="email">E-Mail Address</label>
+											<input id="email" type="email" class="form-control" name="username" id="username" value="" required autofocus>
+											<div class="invalid-feedback">
+												Email is invalid
+											</div>
 										</div>
-									</div>
 
-									<div class="form-group m-0">
-										<button type="submit" class="btn btn-primary btn-block">
-											Login
-										</button>
-									</div>
-									<div class="mt-4 text-center">
-										Don't have an account? <a href="register.html">Create One</a>
-									</div>
-								</form>
+										<div class="form-group">
+											<label for="password">Password
+												<a href="forgot.html" class="float-right">
+													Forgot Password?
+												</a>
+											</label>
+											<input id="password" type="password" class="form-control" name="password" required data-eye>
+											<div class="invalid-feedback">
+												Password is required
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="custom-checkbox custom-control">
+												<input type="checkbox" name="remember" id="remember" class="custom-control-input">
+												<label for="remember" class="custom-control-label">Remember Me</label>
+											</div>
+										</div>
+
+										<div class="form-group m-0">
+											<button id="btnLogin" name="btnLogin" type="submit" class="btn btn-primary btn-block">
+												Login
+											</button>
+										</div>
+										<div class="mt-4 text-center">
+											Don't have an account? <a href="register.html">Create One</a>
+										</div>
+									</form>
+								<?php endif; ?>
 							</div>
 						</div>
 						<div class="footer">
@@ -86,10 +97,34 @@
 	?>
 </body>
 <?php
-if (1 == 1) {
-	echo '<script> location.href="handle.php"</script>';
-} else {
-	echo '<script>alert("Dữ liệu không được rỗng!");</script>';
+if (isset($_POST['btnLogin'])) {
+	include_once __DIR__ . '/../handle/dbconnect.php';
+	$username = $_POST['username'];
+	$password = $_POST['password'];
+
+	$sql =
+		"SELECT *
+	FROM thongtinkhachhang KH
+	WHERE KH.kh_tendangnhap = '$username' AND KH.kh_matkhau = '$password'";
+
+	$result = mysqli_query($conn, $sql);
+	$account = mysqli_fetch_array($result, MYSQLI_ASSOC);
+	//var_dump($account);
+	if (is_null($account)) {
+		echo 'Đăng nhập thất bại!';
+	} else {
+		//Đăng nhập thành công => Lưu trữ thông tin trong 
+		// Lưu SESSION.
+		//  $_SESSION['logged'] = true; // tắt trình duyệt mở lại thì mất thông tin.
+		//  $_SESSION['username'] = $username;
+
+		// Lưu COOKIES
+		setcookie("logged", true, time() + 100, '/');
+		// Kiểm tra trên trình duyệt F12 -> Application -> Cookie (Thu thập dữ liệu người dùng)
+
+		echo '<script>location.href="index.php";</script>';
+		// echo 'Chào mừng ' . $name . ' đã quay lại! ';
+	}
 }
 ?>
 
