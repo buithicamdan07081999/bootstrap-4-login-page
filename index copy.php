@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- https://nentang.vn/app/edu/khoa-hoc/thiet-ke-lap-trinh-web-backend/lap-trinh-can-ban-php/lessons/cookie-trong-php	 -->
 
 <head>
 	<meta charset="utf-8">
@@ -14,9 +15,7 @@
 </head>
 
 <body class="my-login-page">
-	<?php
-	include_once __DIR__ . '/../layouts/partials/header.php'
-	?>
+	<?php include_once __DIR__ . '/../layouts/partials/header.php'; ?>
 	<div class="container-fluid">
 		<section class="h-100">
 			<div class="container h-100">
@@ -28,15 +27,8 @@
 						<div class="card fat">
 							<div class="card-body">
 								<h4 class="card-title">Login</h4>
-
-								<?php if (
-									// (isset($_SESSION['logged']) && $_SESSION['logged'] == true) 
-									 // ||
-									(isset($_COOKIE['logged']) && $_COOKIE['logged'] == true)
-								): ?>
-
-									<h2>Xin chào </h2><?= $_SESSION['username'] ?> đã quay trở lại trang web.
-									<a href="/salomon.com/index.php">Click vào đây để quay lại!</a></br>
+								<?php if (isset($_COOKIE["username"])) : ?>
+									<a> Welcome </a> <?= $_COOKIE["username"] ?> ;
 								<?php else: ?>
 									<form method="post" class="my-login-validation" novalidate="">
 										<div class="form-group">
@@ -78,15 +70,15 @@
 								<?php endif; ?>
 							</div>
 						</div>
+						<a href="/salomon.com/index.php">Click vào đây để quay lại!</a></br>
 						<div class="footer">
-							Copyright &copy; 2017 &mdash; Your Company
+							Copyright &copy;<?php echo date("d-m-Y"); ?> &mdash; KD & BD Official
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 	</div>
-
 
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -101,7 +93,6 @@ if (isset($_POST['btnLogin'])) {
 	include_once __DIR__ . '/../handle/dbconnect.php';
 	$username = $_POST['username'];
 	$password = $_POST['password'];
-
 	$sql =
 		"SELECT *
 	FROM thongtinkhachhang KH
@@ -114,16 +105,14 @@ if (isset($_POST['btnLogin'])) {
 		echo 'Đăng nhập thất bại!';
 	} else {
 		//Đăng nhập thành công => Lưu trữ thông tin trong 
-		// Lưu SESSION.
-		//  $_SESSION['logged'] = true; // tắt trình duyệt mở lại thì mất thông tin.
-		//  $_SESSION['username'] = $username;
-
 		// Lưu COOKIES
-		setcookie("logged", true, time() + 100, '/');
+		setcookie("username", $username, time() + 3600, "/", "", 0);
 		// Kiểm tra trên trình duyệt F12 -> Application -> Cookie (Thu thập dữ liệu người dùng)
-
-		echo '<script>location.href="index.php";</script>';
-		// echo 'Chào mừng ' . $name . ' đã quay lại! ';
+		//echo '<script>location.href="index.php";</script>';
+		if (isset($_COOKIE["username"]))
+		{
+			echo $_COOKIE["username"];
+		}
 	}
 }
 ?>
