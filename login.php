@@ -2,7 +2,10 @@
 <html lang="en">
 <!-- https://nentang.vn/app/edu/khoa-hoc/thiet-ke-lap-trinh-web-backend/lap-trinh-can-ban-php/lessons/cookie-trong-php	 -->
 <?php
+// hàm `session_id()` sẽ trả về giá trị SESSION_ID (tên file session do Web Server tự động tạo)
+// - Nếu trả về Rỗng hoặc NULL => chưa có file Session tồn tại
 if (session_id() === '') {
+	// Yêu cầu Web Server tạo file Session để lưu trữ giá trị tương ứng với CLIENT (Web Browser đang gởi Request)
 	session_start();
 }
 ?>
@@ -14,6 +17,7 @@ if (session_id() === '') {
 	<title>My Login Page</title>
 	<?php
 	include_once __DIR__ .  '/../../layouts/partials/styles.php';
+	include_once __DIR__ . '/../../handle/dbconnect.php';
 	?>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="css/my-login.css">
@@ -21,7 +25,7 @@ if (session_id() === '') {
 
 <body class="my-login-page">
 	<!-- header -->
-	<?php include_once __DIR__ . '/../../layouts/partials/header.php'; ?>
+	<?php include_once __DIR__ . '/../../layouts/partials/header_fe.php'; ?>
 	<!-- end header -->
 
 	<div class="container-fluid">
@@ -38,9 +42,25 @@ if (session_id() === '') {
 								// Đã đăng nhập rồi -> điều hướng về trang chủ
 								if (isset($_SESSION['logged']) && !empty($_SESSION['logged'])) :
 								?>
-									<h2>Wellcome </h2><?= $_SESSION['logged'] ?> !</h2>
-								<?php else : ?>
-								<h4 class="card-title">Login</h4>
+									<h4 class="card-title">Wellcome <?= $_SESSION['logged'] ?> </h4>
+									<form method="post" class="my-logout-validation" novalidate="">
+										<div class="form-group m-0">
+											<button id="btnLogout" name="btnLogout" type="submit" class="btn btn-primary btn-block">
+												Logout
+											</button>
+										</div>
+										</h4>
+									</form>
+									<?php
+									if (isset($_POST['btnLogout'])) {
+										if (isset($_SESSION['logged'])) {
+											unset($_SESSION['logged']);
+											echo '<script>location.href = "/salomon.com/backend/auth/login.php";</script>';
+										}
+									}
+									?>
+								<?php else: ?>
+									<h4 class="card-title">Login</h4>
 									<form method="post" class="my-login-validation" novalidate="">
 										<div class="form-group">
 											<label for="email">E-Mail Address</label>
@@ -79,7 +99,6 @@ if (session_id() === '') {
 										</div>
 									</form>
 								<?php
-									include_once __DIR__ . '/../../handle/dbconnect.php';
 									if (isset($_POST['btnLogin'])) {
 										$username = $_POST['username'];
 										$password = $_POST['password'];
@@ -95,17 +114,16 @@ if (session_id() === '') {
 										if (is_null($account)) {
 											echo 'Đăng nhập thất bại!';
 										} else {
-											   // Lưu thông tin Tên tài khoản user đã đăng nhập
-											   $_SESSION['logged'] = $name;
-											   echo 'Đăng nhập thành công!';
-											   echo '<script>location.href = "/salomon.com/backend/auth/login.php;</script>';
+											// Lưu thông tin Tên tài khoản user đã đăng nhập
+											$_SESSION['logged'] = $name;
+											echo '<script>location.href = "/salomon.com/backend/auth/login.php";</script>';
 										}
 									}
 								endif;
 								?>
 							</div>
 						</div>
-						<a href="/salomon.com/index.php">Click vào đây để quay lại!</a></br>
+						<div style="text-align: center;" class="mt-5"><a href="/salomon.com/index.php">Click vào đây để quay lại trang đăng nhập!</a></br></div>
 						<div class="footer">
 							Copyright &copy;<?php echo date("d-m-Y"); ?> &mdash; KD&BD Official
 						</div>
