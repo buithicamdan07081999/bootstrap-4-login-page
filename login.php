@@ -123,7 +123,7 @@ if (session_id() === '') {
 								?>
 							</div>
 						</div>
-						<div style="text-align: center;" class="mt-5"><a href="/salomon.com/index.php">Click vào đây để quay lại trang đăng nhập!</a></br></div>
+						<div style="text-align: center;" class="mt-5"><a href="/salomon.com/index.php">Tiếp tục mua sắm!</a></br></div>
 						<div class="footer">
 							Copyright &copy;<?php echo date("d-m-Y"); ?> &mdash; KD&BD Official
 						</div>
